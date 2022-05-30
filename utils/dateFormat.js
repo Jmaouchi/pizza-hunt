@@ -1,8 +1,10 @@
 const addDateSuffix = date => {
+  // this will transform the date we are getting from the database and transfer it to a string 
   let dateStr = date.toString();
 
   // get last char of date string
   const lastChar = dateStr.charAt(dateStr.length - 1);
+  console.log(dateStr);
 
   if (lastChar === '1' && dateStr !== '11') {
     dateStr = `${dateStr}st`;
