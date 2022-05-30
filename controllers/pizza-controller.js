@@ -5,6 +5,15 @@ const pizzaController = {
   // get all pizzas
   getAllPizza(req, res) {
     Pizza.find({})
+      .populate({
+        path: 'comments',
+        select: '-__v'
+      })
+      // this wiill take off the _v that is coming from the data (this is a mongoose field by default)
+      .select('-__v')
+      // this method will sort the data from newest to oldest
+      .sort({ _id: -1 })
+      //then display the data
       .then(dbPizzaData => res.json(dbPizzaData))
       .catch(err => {
         console.log(err);
