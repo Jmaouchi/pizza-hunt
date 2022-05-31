@@ -1,9 +1,12 @@
 const $pizzaList = document.querySelector('#pizza-list');
 
+// first we fetched the data from the /api/pizzas to get all the pizzas available in the database
+// then we displayed it for the user on the clien side
 const getPizzaList = () => {
   fetch('/api/pizzas')
     .then(response => response.json())
     .then(pizzaListArr => {
+      // we used foreach here due to database might have many pizzas, so we will create this html template for every column in the database
       pizzaListArr.forEach(printPizza);
     })
     .catch(err => {
@@ -37,4 +40,6 @@ const printPizza = ({ _id, pizzaName, toppings, size, commentCount, createdBy, c
 
   $pizzaList.innerHTML += pizzaCard;
 };
+
+
 getPizzaList();

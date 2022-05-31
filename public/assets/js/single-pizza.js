@@ -9,6 +9,32 @@ const $newCommentForm = document.querySelector('#new-comment-form');
 
 let pizzaId;
 
+function getPizza() {
+  // get id of pizza
+  const searchParams = new URLSearchParams(document.location.search.substring(1));
+  const pizzaId = searchParams.get('id');
+
+  // get pizzaInfo
+  fetch(`/api/pizzas/${pizzaId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error({ message: 'Something went wrong!' });
+      }
+
+      return response.json();
+    })
+    .then(printPizza)
+    .catch(err => {
+      console.log(err);
+      alert('Cannot find a pizza with this id! Taking you back.');
+      // any error takes the user back to the home page
+      //The window history API exposes methods that let us control the state of the browser's session. 
+      //As long as this particular browser session has a previous page, 
+      //it will behave as if the user had clicked on the "Back" button.
+      window.history.back();
+    });
+}
+
 function printPizza(pizzaData) {
   console.log(pizzaData);
 
@@ -22,11 +48,14 @@ function printPizza(pizzaData) {
   $size.textContent = size;
   $toppingsList.innerHTML = toppings
     .map(topping => `<span class="col-auto m-2 text-center btn">${topping}</span>`)
-    .join('');
+    .join(''); // this will map on every topping 
 
+  // loop through the comments if they exist or not
   if (comments && comments.length) {
+    // if there is comments, then use the printComment function to display them
     comments.forEach(printComment);
   } else {
+    // if there is no comments then add this h4, with no comments yet as a text content 
     $commentSection.innerHTML = '<h4 class="bg-dark p-3 rounded">No comments yet!</h4>';
   }
 }
@@ -64,8 +93,11 @@ function printComment(comment) {
   `;
 
   commentDiv.innerHTML = commentContent;
+  //The Element.prepend() method inserts a set of Node objects or
+  // string objects before the first child of the Element (parent element). String objects are inserted as equivalent Text nodes
   $commentSection.prepend(commentDiv);
 }
+
 
 function printReply(reply) {
   return `
@@ -76,6 +108,8 @@ function printReply(reply) {
 `;
 }
 
+
+// handle the add comments method 
 function handleNewCommentSubmit(event) {
   event.preventDefault();
 
@@ -87,8 +121,32 @@ function handleNewCommentSubmit(event) {
   }
 
   const formData = { commentBody, writtenBy };
+
+  fetch(`/api/comments/${pizzaId}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
+      }
+      response.json();
+    })
+    .then(commentResponse => {
+      console.log(commentResponse);
+      location.reload();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
+
+// handle the reply method 
 function handleNewReplySubmit(event) {
   event.preventDefault();
 
@@ -106,7 +164,29 @@ function handleNewReplySubmit(event) {
   }
 
   const formData = { writtenBy, replyBody };
-}
+
+  fetch(`/api/comments/${pizzaId}/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
+      }
+      response.json();
+    })
+    .then(commentResponse => {
+      console.log(commentResponse);
+      location.reload();
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
 
 $backBtn.addEventListener('click', function() {
   window.history.back();
@@ -114,3 +194,4 @@ $backBtn.addEventListener('click', function() {
 
 $newCommentForm.addEventListener('submit', handleNewCommentSubmit);
 $commentSection.addEventListener('submit', handleNewReplySubmit);
+getPizza();

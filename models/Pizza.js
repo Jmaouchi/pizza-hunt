@@ -12,6 +12,7 @@ const PizzaSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      // we added a gatter to transform our date
       get: (createdAtVal) => dateFormat(createdAtVal)
     },
     size: {
@@ -34,12 +35,10 @@ const PizzaSchema = new Schema(
     id: false //We set id to false because this is a virtual that Mongoose returns, and we don’t need it.
   }
 );
-// get total count of comments and replies on retrieval
+//Here we set a virtual to get the total count of comments and replies on retrieval
 PizzaSchema.virtual('commentCount').get(function() {
-  // this is a virtual that can be added to the response by default, everytime a user checks to see a pizza data
-  return this.comments.length;
+  return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0); // the tatal param is 0 and the comment is all replies 
 });
-
 // create the Pizza model using the PizzaSchema
 const Pizza = model('Pizza', PizzaSchema);
 
