@@ -1,6 +1,7 @@
 const { Schema, model, Types } = require('mongoose');
 const dateFormat = require('../utils/dateFormat');
 
+// this is a subdocument and the reason why we initialize it befor the commentSchema because, we need to init something before we can invoque it
 const ReplySchema = new Schema(
   {
     // set custom id to avoid confusion with parent comment _id
@@ -27,6 +28,8 @@ const ReplySchema = new Schema(
   }
 );
 
+
+// commentSchema model, that will hold every comment that a user provides, this model has a reffernce to the reply that is on the top
 const CommentSchema = new Schema(
   {
     writtenBy: {
@@ -40,7 +43,7 @@ const CommentSchema = new Schema(
       default: Date.now,
       get: createdAtVal => dateFormat(createdAtVal)
     },
-    // use ReplySchema to validate data for a reply
+    // use ReplySchema to validate data for a reply ( this will give us the data of any reply from the reply schema)
     replies: [ReplySchema]
   },
   {
@@ -52,6 +55,8 @@ const CommentSchema = new Schema(
   }
 );
 
+// create a virtual thaat will be called replyCount ( this virtual will give us the length of the replies, and it will be always available on
+// the commentSchema da)
 CommentSchema.virtual('replyCount').get(function() {
   return this.replies.length;
 });
