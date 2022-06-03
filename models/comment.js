@@ -2,7 +2,8 @@ const { Schema, model, Types } = require('mongoose');
 const dateFormat = require('../utils/dateFormat');
 
 // this is a subdocument and the reason why we initialize it befor the commentSchema because, we need to init something before we can invoque it
-const ReplySchema = new Schema(
+const ReplySchema = new Schema( 
+  
   {
     // set custom id to avoid confusion with parent comment _id.  just to remember that this schema is not a new table
     replyId: { 
