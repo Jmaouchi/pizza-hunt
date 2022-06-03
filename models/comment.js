@@ -4,16 +4,20 @@ const dateFormat = require('../utils/dateFormat');
 // this is a subdocument and the reason why we initialize it befor the commentSchema because, we need to init something before we can invoque it
 const ReplySchema = new Schema(
   {
-    // set custom id to avoid confusion with parent comment _id
-    replyId: {
-      type: Schema.Types.ObjectId,
+    // set custom id to avoid confusion with parent comment _id.  just to remember that this schema is not a new table
+    replyId: { 
+      type: Schema.Types.ObjectId, // this is a way to create another id, because mangoose wont create ID's for you when it comes to subdocuments
       default: () => new Types.ObjectId()
     },
     replyBody: {
-      type: String
+      type: String,
+      required: true,
+      trim: true
     },
     writtenBy: {
-      type: String
+      type: String,
+      required: true,
+      trim: true
     },
     createdAt: {
       type: Date,
@@ -33,10 +37,14 @@ const ReplySchema = new Schema(
 const CommentSchema = new Schema(
   {
     writtenBy: {
-      type: String
+      type: String,
+      required: true,
+      trim: true
     },
     commentBody: {
-      type: String
+      type: String,
+      required: true,
+      trim: true
     },
     createdAt: {
       type: Date,

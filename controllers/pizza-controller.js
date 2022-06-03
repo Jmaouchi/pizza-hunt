@@ -4,7 +4,7 @@ const { Pizza } = require('../models');
 const pizzaController = {
   // get all pizzas
   getAllPizza(req, res) {
-    Pizza.find({})
+    Pizza.find({}) // empty object will find evrything 
       // this populate is to get all the column from the comments model, same as include in mysql
       .populate({
         path: 'comments',
@@ -61,7 +61,7 @@ const pizzaController = {
     //With Mongoose, the "where" clause is used first ({ _id: params.id }), then the data that we want to updat is (body), 
     // if we want to update only the pizza name then we can change the body to {$set:{pizzaName: body.pizzaName}}
     // then options for how the data should be returned ({ new: true })
-    Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true })// this {new: true } will return the original document. 
+    Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true , runValidators: true})// this {new: true } will return the original document. 
     //By setting the parameter to true, we're instructing Mongoose to return the new version of the document
       .then(dbPizzaData => {
         if (!dbPizzaData) {
